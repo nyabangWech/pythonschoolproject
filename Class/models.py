@@ -5,9 +5,8 @@ class Class(models.Model):
     number_of_students=models.IntegerField()
     class_name = models.CharField(max_length=20)
     name_of_teachers=models.CharField(max_length=30)
-    class_description=models.TextField()
-    capacity=models.IntegerField()
-    school_year=models.DateField()
+    capacity=models.IntegerField(default=0)
+    school_year=models.DateField(null=True)
     
 
 def __str__(self):
