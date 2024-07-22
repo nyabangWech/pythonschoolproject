@@ -9,10 +9,6 @@ class Student(models.Model):
     country = models.CharField(max_length= 20)
     gender =models.CharField(max_length=6)
     id_number = models.IntegerField()
-    # # enrollment_date=models.DateField()
-    # student_guardian=models.TextField()
-    # class_id=models.ForeignKey()
-    # student_picture=models.ImageField()
     bio = models.TextField()
     
     
