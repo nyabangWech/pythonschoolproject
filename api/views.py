@@ -12,13 +12,19 @@ from.serializers import ClassesSerializer
 from .serializers import  TeacherSerializer
 from .serializers import CourseSerializer
 from  rest_framework.views import status
-
-
-
+from.serializers import AddStudent
+from.serializers import classperiodSerializer
+from django.http import JsonResponse
 
 class StudentListView(APIView):
     def get(self,request):
         student=Student.objects.all
+        first_name=request.query_params.get("first_name")
+        country= request.query_params.get("country")
+        if country:
+         student=student.objects.fliter(country=country)
+        if first_name:
+         student =student.fliter(first_name=first_name)
         serializer=StudentSerializer(student,many=True)
         return Response(serializer.data)
     def post(self,request):
@@ -30,7 +36,8 @@ class StudentListView(APIView):
             return Response(Serializer.errors,status= status.HTTP_400_BAD_REQUEST)
 class ClassroomListView(APIView):
     def get(self,request):
-        classroom=Classroom.objectseacherserializers.all
+        classroom=Classroom.objects.all
+        
         serializer=ClassroomSerializer(classroom,many=True)
         return Response(serializer.data)
     def post(self,request):
@@ -91,6 +98,7 @@ class StudentDetailView(APIView):
         Student= Student.objects.get(id=id)
         serializer=StudentSerializer(Student,data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
@@ -100,6 +108,19 @@ class StudentDetailView(APIView):
       Student.delete()
       return Response(status=status.HTTP_202_ACCEPTED)
   
+  
+    def post(self,request,id):
+        student=Student.objects.get(id=id)
+        action=request.data.get("action")
+        Serializer= AddStudent(data=request.data)
+        if action=="enroll":
+         course_id=request.data.get("course_id")
+         self.enroll_student(student,course_id)
+        return Response(status=status.HTTP_202_ACCEPTED)
+    
+    
+    
+    
   
 class classroomDetailView(APIView):
     def get(self,request,id):
@@ -127,7 +148,7 @@ class classesDetailView(APIView):
         Classes=Classes.objects.all.get(id=id)
         serializer =ClassesSerializer(Classroom)
         return Response(serializer.data)
-    
+        
     def put(self,request,id):
         Classes= Classes.objects.get(id=id)
         serializer=ClassesSerializer(Classes,data=request.data)
@@ -180,6 +201,49 @@ class teacherDetailView(APIView):
       Teacher= Teacher.objects.get(id=id)
       Teacher.delete()
       return Response(status=status.HTTP_202_ACCEPTED)
+  
+  
+def assign_teacher_to_course(request, course_id):
+    try:
+        course = Course.objects.get(id=course_id)
+    except Course.DoesNotExist:
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        teacher_id = request.data.get('teacher_id')
+        teacher = Teacher.objects.get(id=teacher_id)
+    except Teacher.DoesNotExist:
+        return Response({'error': 'Teacher not found'}, status=status.HTTP_404_NOT_FOUND)
+    except TypeError:
+        return Response({'error': 'Invalid teacher ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+    course.teacher = teacher
+    course.save()
+    
+    serializer = CourseSerializer(course)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+def assign_teacher_to_class(request,classes_id):
+    try:
+        
+     classroom= classes_id.objects.get(id=classes_id)
+    except Classes.DoesNotExist:
+      return Response({'error':'classes does not Exit'},status= status.HTTP_404_NOT_FOUND)
+    try:
+       teacher_id=request.data.get('teacher_id')
+       teacher= Teacher.objects.get(id=teacher_id)
+    except Teacher.DoesNotExist:
+        return Response({'error':'Teacher doesnt exist'},status=status.HTTP_404_NOT_FOUND)
+
+    except TypeError:
+        return Response({'error':'Invalid teacher ID'},status=status.HTTP_400_BAD_REQUEST)
+    classes_id.teacher = teacher
+    classes_id.save()
+    serializer = ClassesSerializer(Classes)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
   
   
   
