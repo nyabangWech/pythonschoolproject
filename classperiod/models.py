@@ -1,42 +1,26 @@
 from django.db import models
-
-
-class Teacher(models.Model):
-    name = models.CharField(max_length=100)
-    first_name= models.CharField(max_length=20)
-    last_name= models.CharField(max_length=20)
-    email= models.EmailField()
-    date_of_birth= models.DateField()
-    Nationality = models.CharField(max_length= 20)
-    status=models.BooleanField(default=False)
-    gender =models.CharField(max_length=6)
-    level_of_education=models.CharField(max_length=20)
-    salary=models.IntegerField()
-    id_number = models.IntegerField()
-    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True, blank=True, related_name='courses')
-    bio = models.TextField()
-    
-    def __str__(self):
-        return self.name
-
-class Classes(models.Model):
-    number_of_seat= models.IntegerField()
-    number_of_students=models.IntegerField()
-    class_name = models.CharField(max_length=20)
-    name_of_teachers=models.CharField(max_length=30)
-    capacity=models.IntegerField(default=0)
-    school_year=models.IntegerField()
-    
-
-    def __str__(self):
-        return self.name
+from teacher.models import Teacher
+from course.models import  Course
 
 class ClassPeriod(models.Model):
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    class_name = models.ForeignKey(Classes,on_delete=models.CASCADE)
+    Day_select=[
+        ('Mon,Monday'),
+        ('Tues,Tuesday'),
+        ('WED,Wednesday'),
+        ('THU,Thursday'),
+        ('FRI, Friday'),
+        ('SAT,satruday'),
+        ('SUN,sunady'),
+    ]
+    teacher = models.ManyToManyField(Teacher)
+    class_name = models.CharField(max_length=20)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    day_of_week = models.CharField(max_length=10)  
+    day_of_week = models.CharField(max_length=10) 
+    courses= models.ManyToManyField(Course)
+     
+    objects=models.manager()
+    
 
     def __str__(self):
         return f"{self.class_name} with {self.teacher} on {self.day_of_week} from {self.start_time} to {self.end_time}"

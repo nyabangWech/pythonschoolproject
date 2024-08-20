@@ -10,6 +10,9 @@ from .views import classroomDetailView
 from .views import classesDetailView
 from .views import teacherDetailView
 from .views import assign_teacher_to_course
+from .views import ClassperiodListView
+from .views import ClassperiodDetailView
+
 
 
 
@@ -25,11 +28,10 @@ urlpatterns=[
     path("classroom/<int:id>/",classroomDetailView.as_view(),name="Course_detail_view"),
     path("classes/<int:id>/",classesDetailView.as_view(),name="Course_detail_view"),
     path("teacher/<int:id>/",teacherDetailView.as_view(),name="Course_detail_view"),
+    path("ClassperiodListView/",ClassperiodListView.as_view(),name="Classperiod_list_view"),
+    path("Classperiod/<int:id>",ClassperiodDetailView.as_view(),name="Classperiod_detail_view"),
     path('courses/<int:course_id>/assign-teacher/', assign_teacher_to_course, name='assign_teacher_to_course'),
-    
-
-
-
+   
       
 ]
 

@@ -1,6 +1,12 @@
 from django.db import models
+from classes.models import Classes
 
 class Teacher(models.Model):
+    GENDER_CHOICES=(
+        ('M','male'),
+        ('F','Female'),
+        ('trans','transgender'),
+    )
     first_name= models.CharField(max_length=20)
     last_name= models.CharField(max_length=20)
     email= models.EmailField()
@@ -11,9 +17,10 @@ class Teacher(models.Model):
     level_of_education=models.CharField(max_length=20)
     salary=models.IntegerField()
     id_number = models.IntegerField()
+    classes=models.ManyToManyField(Classes)
     teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL, null=True, blank=True, related_name='courses')
     bio = models.TextField()
-    
+    objects=models.manager()
     
     
     def __str__(self):
