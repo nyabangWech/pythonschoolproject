@@ -37,3 +37,22 @@ class classperiodSerializer(serializers.ModelSerializer):
       class Meta:
        Model=ClassPeriod
        field="_all_"
+class minimalClass_PeriodSerializer(serializers.ModelSerializer):
+    period_name = serializers.SerializerMethodField()
+    def get_period_name(self,object):
+        return f"{object.name}"
+    class Meta:
+        model = ClassPeriod
+        fields = ["name","class_period_classroom","period_name"]  
+class minimalClassesSerializer(serializers.ModelSerializer):
+    check_name = serializers.SerializerMethodField()
+
+    def get_check_name(self, object): 
+        return f"{object.name}"  
+class minimalStudentSerializers(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    def get_full_name(self,object):
+        return f"{object.first_name} {object.last_name}"
+    class Meta:
+        model=Student
+        fields=["full_name","email"]   

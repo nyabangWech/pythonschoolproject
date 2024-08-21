@@ -12,13 +12,14 @@ class ClassPeriod(models.Model):
         ('SAT,satruday'),
         ('SUN,sunady'),
     ]
+    teacher_description=models.TextField()
     teacher = models.ManyToManyField(Teacher)
     class_name = models.CharField(max_length=20)
     start_time = models.TimeField()
     end_time = models.TimeField()
     day_of_week = models.CharField(max_length=10) 
     courses= models.ManyToManyField(Course)
-     
+    teacher_name=models.TextField()
     objects=models.manager()
     
 
